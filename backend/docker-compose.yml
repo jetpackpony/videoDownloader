@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    container_name: ${CONTAINER_NAME}-dev
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/node_modules
+    ports:
+      - 4000:4000
+      - 9229:9229
+    command: npm run dev
+    env_file:
+      - .env
+
+volumes:
+  data-volume:
