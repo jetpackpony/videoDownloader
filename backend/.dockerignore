@@ -11,3 +11,4 @@ LICENSE
 .env*
 .secrets
 template.env
+tmp
