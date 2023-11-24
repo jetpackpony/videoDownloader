@@ -1,4 +1,19 @@
 FROM node:20.9.0-bookworm-slim as base
+
+# Update packages
+RUN apt-get -y update \
+  && apt-get -y upgrade
+
+# Install add-apt-repository
+RUN apt-get install -y software-properties-common \
+  && apt-get install -y python3-launchpadlib
+
+# Install ffmpeg and yt-dlp
+RUN add-apt-repository ppa:tomtomtom/yt-dlp \
+  && apt-get -y update \
+  && apt-get install -y ffmpeg \
+  && apt-get install -y yt-dlp
+
 WORKDIR /home/node/app
 
 # For dev copy the whole thing over
