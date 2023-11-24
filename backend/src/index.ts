@@ -13,7 +13,16 @@ app.use(express.static("public"));
 app.get(
   "/download",
   asyncHandler(
-    async (req: Request<{ playlistURL: string; title: string }>, res, next) => {
+    async (
+      req: Request<
+        unknown,
+        unknown,
+        unknown,
+        { playlistURL: string; title: string }
+      >,
+      res,
+      next,
+    ) => {
       const url = req.query.playlistURL;
       const title = (req.query.title || "output").toString();
       if (typeof url !== "string" || !isValidURL(url)) {
