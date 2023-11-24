@@ -118,6 +118,9 @@ app.get(
         res.write(`data: ${JSON.stringify(progress)}\n\n`);
       });
       job.eventEmitter.on("complete", (progress) => {
+        console.log(
+          `Finished job ${job.id}, downloaded into: ${job.eventEmitter.destination}`,
+        );
         jobs = jobs.filter((j) => j.id !== job.id);
         res.write(`event: complete\n`);
         res.write(`data: ${JSON.stringify(progress)}\n\n`);
