@@ -1,7 +1,18 @@
-export function watchProgress(url, container) {
-  console.log("watching progress for ", url, container);
+function setProgress(container, value) {
+  const progressBar = container.querySelector(".progress");
+  progressBar.innerText = `${value}%`;
+  progressBar.value = value;
+}
 
-  const source = new EventSource(url);
+function setETA(container, value) {
+  const etaValue = container.querySelector(".eta-value");
+  etaValue.innerText = value;
+}
+
+export function watchProgress(progressURL, saveURL, container) {
+  console.log("watching progress for ", progressURL, container);
+
+  const source = new EventSource(progressURL);
 
   let maxPercent = 0;
   source.addEventListener("progress", ({ data }) => {
@@ -11,16 +22,20 @@ export function watchProgress(url, container) {
       maxPercent = 100;
     }
     console.log(`Progress ${maxPercent}%, ETA: ${eta}`);
-    const progressBar = container.querySelector(".progress");
-    progressBar.innerText = `${maxPercent}%`;
-    progressBar.value = maxPercent;
-    const etaValue = container.querySelector(".eta-value");
-    etaValue.innerText = eta;
+    setProgress(container, maxPercent);
+    setETA(container, eta);
   });
 
   source.addEventListener("complete", () => {
     console.log(`Complete`);
     source.close();
+    const saveLink = document.createElement("a");
+    saveLink.href = saveURL;
+    saveLink.title = "Save Downloaded Video";
+    saveLink.innerText = "Save video";
+    container.appendChild(saveLink);
+    setProgress(container, 100);
+    setETA(container, "--:--");
   });
 
   source.onerror = (err) => {

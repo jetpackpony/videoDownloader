@@ -86,7 +86,10 @@ app.post(
 
       res.json({
         data: { jobID: job.id },
-        links: { progress: `/progress?jobID=${job.id}` },
+        links: {
+          progress: `/progress?jobID=${job.id}`,
+          save: `/save?jobID=${job.id}`,
+        },
       });
     },
   ),
@@ -117,17 +120,46 @@ app.get(
         res.write(`event: progress\n`);
         res.write(`data: ${JSON.stringify(progress)}\n\n`);
       });
-      job.eventEmitter.on("complete", (progress) => {
+      job.eventEmitter.on("complete", () => {
         console.log(
           `Finished job ${job.id}, downloaded into: ${job.eventEmitter.destination}`,
         );
-        jobs = jobs.filter((j) => j.id !== job.id);
         res.write(`event: complete\n`);
-        res.write(`data: ${JSON.stringify(progress)}\n\n`);
+        res.write(`data: {}\n\n`);
         res.end();
       });
       job.eventEmitter.on("error", (err) => {
         next(err);
+      });
+    },
+  ),
+);
+
+app.get(
+  "/save",
+  asyncHandler(
+    async (
+      req: Request<unknown, unknown, unknown, { jobID: string }>,
+      res,
+      next,
+    ) => {
+      const jobID = req.query.jobID;
+      const job = jobs.find((job) => job.id === jobID);
+      if (!job) {
+        throw new Error(`Couldn't find a job with ID ${jobID}`);
+      }
+
+      const dest = job.eventEmitter.destination;
+      res.download(dest, (err) => {
+        if (err) {
+          next(err);
+        } else {
+          console.log("Sent:", dest);
+          fs.unlink(dest).then(() => {
+            console.log("Removed the tmp file");
+            jobs = jobs.filter((j) => j.id !== job.id);
+          });
+        }
       });
     },
   ),
