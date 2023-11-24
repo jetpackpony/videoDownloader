@@ -7,6 +7,7 @@ const CONCURRENT_DOWNLOADS = 8;
 const DEST_MASK = /Destination: (.+)/;
 const ALREADY_DOWNLOADED_MASK = /(.+) has already been downloaded/;
 const PROGRESS_MASK = /(\S+)%.*ETA (\S+)/;
+const MERGER_MASK = /Merging formats into "(.+)"/;
 
 export class DownloadEventEmitter extends EventEmitter {
   public destination: string = "";
@@ -42,6 +43,12 @@ export function downloadPlaylistEventEmitter(url: URL, title: string) {
           const percent = parseInt(progress[1], 10);
           const eta = progress[2];
           emitter.emit("progress", { percent, eta });
+        }
+      }
+      if (eventType === "Merger") {
+        const merger = eventData.match(MERGER_MASK);
+        if (merger) {
+          emitter.destination = merger[1].trim();
         }
       }
     })
