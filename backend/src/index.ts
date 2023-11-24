@@ -8,12 +8,7 @@ import fs from "node:fs/promises";
 const port = 4000;
 const app = express();
 
-app.get(
-  "/",
-  asyncHandler(async (req, res) => {
-    res.send("Hello world");
-  }),
-);
+app.use(express.static("public"));
 
 app.get(
   "/download",
