@@ -8,6 +8,53 @@
   </head>
 
   <body>
-    <script type="module"></script>
+    <template id="progress-template">
+      <div id="">
+        <div class="title"></div>
+        <progress class="progress" max="100" value="0">0%</progress>
+        <span> <span class="eta-value">--:--</span> ETA </span>
+      </div>
+    </template>
+    <div id="progress-container"></div>
+    <form id="download-form">
+      <input type="text" name="playlistURL" />
+      <input type="text" name="title" />
+      <button type="submit">Download</button>
+    </form>
+    <script type="module">
+      import { watchProgress } from "./watchProgress.js";
+
+      const downloadForm = document.querySelector("#download-form");
+      downloadForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(downloadForm));
+        const rawResponse = await fetch("/job", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const content = await rawResponse.json();
+        console.log(content);
+
+        if (content && !content.errors) {
+          const containerID = `job-${content.data.jobID}`;
+          const clone = document
+            .querySelector("#progress-template")
+            .content.cloneNode(true);
+          clone.querySelector("div").id = containerID;
+          clone.querySelector(".title").innerText = formData.title;
+
+          document.querySelector("#progress-container").appendChild(clone);
+
+          watchProgress(
+            content.links.progress,
+            document.querySelector(`#${containerID}`),
+          );
+        }
+      });
+    </script>
   </body>
 </html>
