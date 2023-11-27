@@ -33,3 +33,5 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm install
 COPY --from=builder /home/node/app/build ./build
+COPY --from=builder /home/node/app/public ./public
+RUN mkdir -p /home/node/app/tmp
