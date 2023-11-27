@@ -37,6 +37,7 @@
           body: JSON.stringify(formData),
         });
         const content = await rawResponse.json();
+        downloadForm.reset();
 
         if (content && !content.errors) {
           console.log(`Created job with ID: ${content.data.jobID}`);
