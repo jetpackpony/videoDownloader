@@ -32,6 +32,7 @@ export function watchProgress(progressURL, saveURL, container) {
     saveLink.href = saveURL;
     saveLink.title = "Save Downloaded Video";
     saveLink.innerText = "Save video";
+    saveLink.target = "_blank";
     container.appendChild(saveLink);
     setProgress(container, 100);
     setETA(container, "--:--");
