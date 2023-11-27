@@ -1,0 +1,10 @@
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+}
+
+body {
+  background-color: rgb(38, 42, 62);
+}
