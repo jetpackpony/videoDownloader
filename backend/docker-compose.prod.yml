@@ -5,6 +5,6 @@ services:
     container_name: ${CONTAINER_NAME}
     command: npm run start
     ports:
-      - 4000:4000
+      - ${PORT}:${PORT}
     env_file:
       - .env

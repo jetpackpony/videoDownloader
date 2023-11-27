@@ -11,7 +11,7 @@ import {
   downloadPlaylistEventEmitter,
 } from "./downloadEventEmitter.js";
 
-const port = 4000;
+const port = process.env.PORT || 4000;
 const app = express();
 
 app.use(express.static("public"));
