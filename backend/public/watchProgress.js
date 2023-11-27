@@ -10,7 +10,7 @@ function setETA(container, value) {
 }
 
 export function watchProgress(progressURL, saveURL, container) {
-  console.log("watching progress for ", progressURL, container);
+  console.log("watching progress for ", progressURL);
 
   const source = new EventSource(progressURL);
 
@@ -21,13 +21,12 @@ export function watchProgress(progressURL, saveURL, container) {
     if (maxPercent > 100) {
       maxPercent = 100;
     }
-    console.log(`Progress ${maxPercent}%, ETA: ${eta}`);
     setProgress(container, maxPercent);
     setETA(container, eta);
   });
 
   source.addEventListener("complete", () => {
-    console.log(`Complete`);
+    console.log(`Complete`, progressURL);
     source.close();
     const saveLink = document.createElement("a");
     saveLink.href = saveURL;

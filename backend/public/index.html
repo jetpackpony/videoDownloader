@@ -37,9 +37,9 @@
           body: JSON.stringify(formData),
         });
         const content = await rawResponse.json();
-        console.log(content);
 
         if (content && !content.errors) {
+          console.log(`Created job with ID: ${content.data.jobID}`);
           const containerID = `job-${content.data.jobID}`;
           const clone = document
             .querySelector("#progress-template")
