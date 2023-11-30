@@ -7,7 +7,21 @@
     <title>Video Downloader</title>
   </head>
   <body>
-    <div id="app"></div>
+    <template id="progress-template">
+      <div id="">
+        <div class="title"></div>
+        <progress class="progress" max="100" value="0">0%</progress>
+        <span> <span class="eta-value">--:--</span> ETA </span>
+      </div>
+    </template>
+    <div id="app">
+      <form id="download-form">
+        <input type="text" name="playlistURL" />
+        <input type="text" name="title" />
+        <button type="submit">Download</button>
+      </form>
+      <div id="progress-container"></div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
