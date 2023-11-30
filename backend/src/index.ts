@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import type { Request } from "express";
 import bodyParser from "body-parser";
 import asyncHandler from "express-async-handler";
@@ -14,6 +15,9 @@ import {
 const port = process.env.PORT || 4000;
 const app = express();
 
+if (process.env.NODE_ENV === "development") {
+  app.use(cors());
+}
 app.use(express.static("public"));
 app.use(bodyParser.json());
 
