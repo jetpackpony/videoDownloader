@@ -1,5 +1,6 @@
 import YTDlp from "yt-dlp-wrap";
 import { EventEmitter } from "node:events";
+import { ProgressEventData } from "./types.js";
 
 const TMP_DIRECTORY = "tmp";
 const CONCURRENT_DOWNLOADS = 8;
@@ -42,7 +43,8 @@ export function downloadPlaylistEventEmitter(url: URL, title: string) {
         if (progress !== null) {
           const percent = parseInt(progress[1], 10);
           const eta = progress[2];
-          emitter.emit("progress", { percent, eta });
+          const progressEventData: ProgressEventData = { percent, eta };
+          emitter.emit("progress", progressEventData);
         }
       }
       if (eventType === "Merger") {

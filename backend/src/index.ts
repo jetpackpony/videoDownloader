@@ -7,10 +7,8 @@ import { isValidURL } from "./downloadFile.js";
 import { downloadPlaylist } from "./ytDlp.js";
 import fs from "node:fs/promises";
 import { nanoid } from "nanoid";
-import {
-  DownloadEventEmitter,
-  downloadPlaylistEventEmitter,
-} from "./downloadEventEmitter.js";
+import { downloadPlaylistEventEmitter } from "./downloadEventEmitter.js";
+import type { Job, PostJobResponse, ProgressEventData } from "./types.js";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -61,10 +59,6 @@ app.get(
   ),
 );
 
-interface Job {
-  id: string;
-  eventEmitter: DownloadEventEmitter;
-}
 let jobs: Job[] = [];
 
 app.post(
@@ -82,19 +76,21 @@ app.post(
       const playlistURL = new URL(url);
 
       console.log(`Got URL: ${playlistURL} and title: ${title}`);
-      const job = {
+      const job: Job = {
         id: nanoid(8),
         eventEmitter: downloadPlaylistEventEmitter(playlistURL, title),
       };
       jobs.push(job);
 
-      res.json({
+      const response: PostJobResponse = {
         data: { jobID: job.id },
         links: {
           progress: `/progress?jobID=${job.id}`,
           save: `/save?jobID=${job.id}`,
         },
-      });
+      };
+
+      res.json(response);
     },
   ),
 );
@@ -120,7 +116,7 @@ app.get(
       };
       res.writeHead(200, headers);
 
-      job.eventEmitter.on("progress", (progress) => {
+      job.eventEmitter.on("progress", (progress: ProgressEventData) => {
         res.write(`event: progress\n`);
         res.write(`data: ${JSON.stringify(progress)}\n\n`);
       });
