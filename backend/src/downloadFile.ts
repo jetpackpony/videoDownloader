@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import https from "node:https";
+import { log } from "./log.js";
 
 export function isValidURL(url: string) {
   let parsed;
@@ -22,7 +23,7 @@ export async function downloadFile(url: string | URL, destination: string) {
         response.pipe(file);
         file.on("finish", function () {
           file.close(() => {
-            console.log(`Downloaded ${destination}`);
+            log(`Downloaded ${destination}`);
             resolve(destination);
           });
         });

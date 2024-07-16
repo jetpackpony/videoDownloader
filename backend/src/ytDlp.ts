@@ -1,4 +1,5 @@
 import { downloadPlaylistEventEmitter } from "./downloadEventEmitter.js";
+import { log } from "./log.js";
 
 export function downloadPlaylist(url: URL, title: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -6,7 +7,7 @@ export function downloadPlaylist(url: URL, title: string): Promise<string> {
 
     emitter.on("error", reject);
     emitter.on("progress", ({ percent, eta }) => {
-      console.log(`${percent}% ETA ${eta}`);
+      log(`${percent}% ETA ${eta}`);
     });
     emitter.on("complete", () => {
       resolve(emitter.destination);

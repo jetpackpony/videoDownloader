@@ -9,6 +9,7 @@ import fs from "node:fs/promises";
 import { nanoid } from "nanoid";
 import { downloadPlaylistEventEmitter } from "./downloadEventEmitter.js";
 import type { Job, PostJobResponse, ProgressEventData } from "./types.js";
+import { log } from "./log.js";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -41,14 +42,14 @@ app.get(
       const playlistPath = await downloadPlaylist(playlistURL, title);
 
       if (playlistPath) {
-        console.log(`downloaded into ${playlistPath}`);
+        log(`downloaded into ${playlistPath}`);
         res.download(playlistPath, (err) => {
           if (err) {
             next(err);
           } else {
-            console.log("Sent:", playlistPath);
+            log(`Sent: ${playlistPath}`);
             fs.unlink(playlistPath).then(() => {
-              console.log("Removed the tmp file");
+              log("Removed the tmp file");
             });
           }
         });
@@ -75,7 +76,7 @@ app.post(
       }
       const playlistURL = new URL(url);
 
-      console.log(`Got URL: ${playlistURL} and title: ${title}`);
+      log(`Got URL: ${playlistURL} and title: ${title}`);
       const job: Job = {
         id: nanoid(8),
         eventEmitter: downloadPlaylistEventEmitter(playlistURL, title),
@@ -121,7 +122,7 @@ app.get(
         res.write(`data: ${JSON.stringify(progress)}\n\n`);
       });
       job.eventEmitter.on("complete", () => {
-        console.log(
+        log(
           `Finished job ${job.id}, downloaded into: ${job.eventEmitter.destination}`,
         );
         res.write(`event: complete\n`);
@@ -154,9 +155,9 @@ app.get(
         if (err) {
           next(err);
         } else {
-          console.log("Sent:", dest);
+          log(`Sent: ${dest}`);
           fs.unlink(dest).then(() => {
-            console.log("Removed the tmp file");
+            log("Removed the tmp file");
             jobs = jobs.filter((j) => j.id !== job.id);
           });
         }
@@ -166,5 +167,5 @@ app.get(
 );
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  log(`Server running on port ${port}`);
 });
